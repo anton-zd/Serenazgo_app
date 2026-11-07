@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Inclusivo de Atención de Serenazgo — Prototipo</title>
+
+<style>
+:root{--blue:#1764c0;--blue2:#eaf2ff;--ink:#182230;--muted:#596579;--line:#d7dee8;--bg:#f4f7fb;--green:#21834b;--red:#c93434}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg)}button,input,textarea{font:inherit}button{cursor:pointer}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:17px clamp(16px,4vw,52px);display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:13px}.crest{width:48px;height:52px;background:#16283d;color:#fff;display:grid;place-items:center;border-radius:12px;font-size:25px}.brand h1{font-size:clamp(17px,2vw,24px);margin:0 0 4px}.brand p{margin:0;color:var(--muted);font-size:14px}.toplinks{display:flex;gap:18px;color:#344054;font-size:14px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);width:100%;max-width:1500px;margin:auto;min-height:calc(100vh - 86px)}
+.layout.role-wide{display:block;width:100%;max-width:none;margin:0}.layout.role-wide>main{width:100%;max-width:none;padding:clamp(22px,3vw,48px)}
+#personalPanel,#serenazgoPanel{width:100%;max-width:none}.kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));width:100%}.kpi-grid .panel{min-width:0;padding:22px}.dashboard-lower{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,1fr);gap:18px}.case-list{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+@media(max-width:900px){.layout.role-wide>main{padding:20px}.dashboard-lower{grid-template-columns:1fr}}aside{background:#fff;border-right:1px solid var(--line);padding:24px 12px}aside button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:14px;border-radius:8px;margin-bottom:6px;color:#293548;font-weight:600}aside button.active{background:var(--blue2);color:var(--blue)}main{padding:clamp(18px,3vw,38px);min-width:0}.steps{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:26px}.step{display:flex;gap:9px;align-items:center;color:#677386;font-size:14px}.bubble{width:30px;height:30px;border:1px solid #c7d0dd;border-radius:50%;display:grid;place-items:center;font-weight:bold;background:#fff}.step.current{color:var(--blue);font-weight:bold}.step.current .bubble,.step.done .bubble{background:var(--blue);color:white;border-color:var(--blue)}.line{height:1px;background:#ccd5e2;width:clamp(15px,4vw,70px)}
+h2{font-size:clamp(24px,3vw,32px);margin:0 0 8px} .lead{color:var(--muted);line-height:1.5;margin:0 0 24px}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:0 2px 8px #15263b08}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.incident{border:1px solid #cfd7e2;background:#fff;border-radius:12px;padding:18px 12px;min-height:180px;text-align:center;color:var(--ink)}.incident:hover,.incident.selected{border:2px solid var(--blue);background:#f3f7ff}.icon{font-size:34px;margin-bottom:10px}.incident strong{display:block;font-size:17px;margin-bottom:8px}.incident span:last-child{font-size:13px;line-height:1.4;color:var(--muted)}.notice{background:#edf5ff;border:1px solid #d4e6ff;border-radius:9px;padding:13px 15px;color:#2c4f7d;margin:18px 0;line-height:1.45}.row{display:flex;gap:10px;align-items:center}.row>*{min-width:0}.field{display:block;width:100%;padding:12px 13px;border:1px solid #cbd4df;border-radius:8px;background:white;color:var(--ink);outline:none}.field:focus{border-color:var(--blue);box-shadow:0 0 0 3px #1764c020}label{display:block;font-weight:bold;font-size:14px;margin:0 0 8px}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:8px;padding:12px 16px;font-weight:bold}.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.btn:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;justify-content:space-between;gap:12px;margin-top:22px}.hidden{display:none!important}#map{height:370px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#eef2f7}#map iframe{width:100%;height:100%;border:0;display:block}.maptools{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap}.two{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:18px}.muted{color:var(--muted);font-size:13px;line-height:1.45}.statusbanner{background:#eaf7ee;border:1px solid #c7e8d0;border-radius:12px;padding:22px;display:flex;gap:16px;align-items:center;margin-bottom:20px}.check{width:52px;height:52px;border-radius:50%;background:var(--green);color:white;display:grid;place-items:center;font-size:29px;flex-shrink:0}.ticket{margin-left:auto;background:#fff;padding:14px 18px;border-radius:8px;min-width:190px}.ticket strong{display:block;font-size:22px;margin:6px 0}.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}.state{border:1px solid var(--line);border-radius:10px;padding:15px 8px;text-align:center;background:#fff}.state .bubble{margin:0 auto 9px}.state.active{border-color:var(--blue);background:#f0f6ff}.state.complete .bubble{background:var(--green);color:#fff;border-color:var(--green)}.columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.smallhead{font-size:17px;margin:0 0 14px}.kv{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #edf0f4;padding:10px 0;font-size:14px}.kv span{color:var(--muted)}.footer{font-size:12px;color:#788396;margin-top:24px;text-align:center}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172638;color:white;padding:12px 18px;border-radius:8px;box-shadow:0 4px 20px #0003;z-index:1000;max-width:90vw}
+@media(max-width:900px){.layout{grid-template-columns:1fr}aside{display:flex;padding:8px;gap:5px;border-right:0;border-bottom:1px solid var(--line);overflow:auto}aside button{white-space:nowrap;width:auto;margin:0;padding:11px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.columns{grid-template-columns:1fr}.toplinks{display:none}.ticket{margin:0}.statusbanner{align-items:flex-start;flex-wrap:wrap}.progress{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.kpi-grid{grid-template-columns:1fr}main{padding:16px}.panel{padding:15px}.row{align-items:stretch;flex-direction:column}.actions .btn{flex:1}.grid{gap:8px}.incident{padding:13px 8px;min-height:170px}.progress{grid-template-columns:1fr 1fr}}
+
+.access-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#eaf2ff,#f7f9fc)}.access-card{width:min(760px,100%);background:white;border:1px solid var(--line);border-radius:18px;padding:34px;box-shadow:0 14px 45px #1b355018;text-align:center}.access-logo{width:58px;height:58px;margin:0 auto 14px;background:#16283d;color:white;border-radius:15px;display:grid;place-items:center;font-size:30px}.access-card h1{font-size:25px;margin:0 0 8px}.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:28px 0 10px}.role-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:22px 12px;display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--ink)}.role-card:hover{border-color:var(--blue);background:#f5f8ff}.role-card span{font-size:34px}.role-card small{color:var(--muted);line-height:1.4}.login-area{max-width:420px;margin:24px auto 0;text-align:left}.login-area h2{text-align:center}.full{width:100%}.session-tools{display:flex;align-items:center;gap:12px}.session-tools span{font-weight:bold;color:var(--blue);background:var(--blue2);padding:8px 12px;border-radius:20px}.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi-grid .panel{margin:0}.kpi-grid h2{font-size:28px;color:var(--blue);margin:8px 0 0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}th{background:#f5f7fa;color:#46546a}td select{min-width:130px}.case-list{display:grid;gap:14px}.case-item{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fff}.case-item h3{margin:0 0 8px}.summary-bars{color:var(--muted);font-size:14px}.barrow{display:grid;grid-template-columns:120px 1fr 30px;gap:10px;align-items:center;margin:10px 0}.bar{height:10px;background:#e8eef7;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
+@media(max-width:700px){.role-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.access-card{padding:23px 16px}.session-tools{width:100%;justify-content:flex-end}.top{flex-wrap:wrap}}
+
+/* Landing Page PC12 */
+#landingPage{background:#fff;min-height:100vh;color:var(--ink)}
+.landing-nav{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px clamp(18px,5vw,76px);border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:20}
+.landing-nav nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap}.landing-nav a{color:#344054;text-decoration:none;font-size:14px;font-weight:600}
+.landing-hero{padding:clamp(42px,7vw,92px) clamp(20px,8vw,120px);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:50px;align-items:center;background:linear-gradient(120deg,#f0f6ff,#fff)}
+.eyebrow{color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px}.landing-copy h2{font-size:clamp(32px,4.5vw,54px);line-height:1.08;margin:14px 0 18px;max-width:760px}.landing-copy>p{color:var(--muted);font-size:17px;line-height:1.65;max-width:650px}.landing-actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}
+.landing-visual{background:#172b43;color:#fff;border-radius:24px;padding:38px;text-align:center;box-shadow:0 18px 50px #172b4325}.visual-shield{width:90px;height:90px;border-radius:25px;background:#fff;color:#1764c0;display:grid;place-items:center;font-size:52px;margin:0 auto 22px}.landing-visual h3{font-size:24px;margin:0 0 8px}.landing-visual p{color:#d4dfed}.visual-stats{display:flex;justify-content:center;gap:44px;margin-top:28px}.visual-stats b,.visual-stats small{display:block}.visual-stats b{font-size:28px}.visual-stats small{font-size:12px;color:#d4dfed}
+.landing-section{padding:62px clamp(20px,8vw,120px)}.landing-section h2,.landing-help h2{font-size:clamp(25px,3vw,36px);margin:10px 0 26px}.landing-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.landing-cards article{border:1px solid var(--line);border-radius:14px;padding:24px;background:#fff}.landing-cards h3{margin:12px 0 8px}.landing-cards p{color:var(--muted);line-height:1.55;margin:0}.lp-icon{font-size:30px}.services-section{background:#f5f8fc}.services-section .landing-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.landing-help{margin:30px clamp(20px,8vw,120px);padding:34px;background:#eaf2ff;border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:24px}.landing-help p{color:var(--muted);line-height:1.55;max-width:760px}.landing-footer{text-align:center;color:#778397;padding:26px;font-size:12px;border-top:1px solid var(--line)}
+/* Interactive dashboard */
+.dashboard-block{margin:26px 0}.dashboard-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:18px}.dashboard-heading h2{margin:6px 0}.demo-tag{background:#fff4d6;color:#805b00;padding:8px 12px;border-radius:30px;font-size:12px;font-weight:700;white-space:nowrap}
+.filter-row{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}.filter-row label{min-width:210px;margin:0}.filter-row .field{margin-top:7px}.charts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}.chart-panel{min-width:0;margin:0}.chart-panel canvas{display:block;width:100%;max-width:100%;height:230px}.chart-wide{grid-column:1/-1}.dashboard-note{margin:14px 2px}
+@media(max-width:850px){.landing-nav{align-items:flex-start;flex-direction:column}.landing-hero{grid-template-columns:1fr}.landing-cards,.services-section .landing-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.landing-help{align-items:flex-start;flex-direction:column}.charts-grid{grid-template-columns:1fr}.chart-wide{grid-column:auto}}
+@media(max-width:560px){.landing-nav nav{gap:12px}.landing-cards,.services-section .landing-cards{grid-template-columns:1fr}.visual-stats{gap:24px}.dashboard-heading{align-items:flex-start;flex-direction:column}.filter-row label{width:100%}}
+
+
+/* Estilo aplicado exclusivamente al dashboard del Personal */
+#personalPanel .dashboard-block{margin:18px 0 26px}
+#personalPanel .dashboard-heading{background:#fff;border:1px solid #e3e6f0;border-left:4px solid #4e73df;border-radius:8px;padding:18px 20px;margin-bottom:16px}
+#personalPanel .dashboard-heading h2{font-size:25px;color:#2e3440}
+#personalPanel .filter-row{border:0;border-radius:8px;box-shadow:0 .15rem 1.25rem rgba(58,59,69,.08);padding:18px;margin-bottom:18px}
+#personalPanel .kpi-grid .panel{border:0;border-left:4px solid #4e73df;border-radius:7px;box-shadow:0 .15rem 1.25rem rgba(58,59,69,.08);padding:20px}
+#personalPanel .kpi-grid .panel:nth-child(2){border-left-color:#1cc88a}
+#personalPanel .kpi-grid .panel:nth-child(3){border-left-color:#f6c23e}
+#personalPanel .kpi-grid .panel:nth-child(4){border-left-color:#36b9cc}
+#personalPanel .charts-grid .chart-panel{border:0;border-radius:8px;box-shadow:0 .15rem 1.25rem rgba(58,59,69,.08);padding:18px}
+#personalPanel .chart-panel .smallhead{color:#4e73df;border-bottom:1px solid #e3e6f0;padding-bottom:12px}
+
+
+
+/* Selector de periodo tipo calendario, exclusivo del dashboard del Personal */
+#personalPanel .filter-row .date-filter{min-width:190px;flex:1}
+#personalPanel .filter-row .date-filter .field{width:100%;min-height:42px;color:#344054;background:#fff}
+#personalPanel .filter-row .date-filter .field:focus{border-color:#4e73df;box-shadow:0 0 0 3px rgba(78,115,223,.15)}
+@media(max-width:700px){#personalPanel .filter-row .date-filter{width:100%;min-width:100%}}
+</style>
+</head>
+<body>
+
+<div id="landingPage">
+  <header class="landing-nav">
+    <div class="brand"><div class="crest">✚</div><div><h1>Sistema Inclusivo de Atención de Serenazgo</h1><p>Municipalidad de Chorrillos</p></div></div>
+    <nav><a href="#lp-beneficios">Beneficiarios</a><a href="#lp-servicios">Servicios</a><a href="#lp-ayuda">Ayuda</a><button class="btn primary" onclick="enterSystem()">Ingresar al sistema</button></nav>
+  </header>
+  <section class="landing-hero">
+    <div class="landing-copy">
+      <span class="eyebrow">Atención ciudadana accesible</span>
+      <h2>Tu comunidad más segura, con atención cercana y oportuna.</h2>
+      <p>Una plataforma municipal para registrar incidencias, coordinar la respuesta de Serenazgo y consultar el avance de cada solicitud.</p>
+      <div class="landing-actions"><button class="btn primary" onclick="enterSystem()">Solicitar atención</button><a class="btn" href="#lp-servicios">Conocer los servicios</a></div>
+      <p class="muted">Prototipo académico de demostración. No reemplaza los canales oficiales de emergencia.</p>
+    </div>
+    <div class="landing-visual"><div class="visual-shield">✚</div><h3>Serenazgo cerca de ti</h3><p>Ciudadano · Personal · Serenazgo</p><div class="visual-stats"><span><b>3</b><small>roles conectados</small></span><span><b>4</b><small>fases de atención</small></span></div></div>
+  </section>
+  <section id="lp-beneficios" class="landing-section"><div><span class="eyebrow">¿A quiénes beneficia?</span><h2>Una plataforma para toda la comunidad</h2></div><div class="landing-cards">
+    <article><div class="lp-icon">👤</div><h3>Ciudadanos</h3><p>Registran incidencias, indican su ubicación y consultan el estado de sus solicitudes.</p></article>
+    <article><div class="lp-icon">🖥️</div><h3>Personal municipal</h3><p>Revisa los reportes, informa al ciudadano y coordina la asignación de agentes.</p></article>
+    <article><div class="lp-icon">🛡️</div><h3>Agentes de Serenazgo</h3><p>Reciben casos asignados, se dirigen al lugar y registran el resultado de la atención.</p></article>
+  </div></section>
+  <section id="lp-servicios" class="landing-section services-section"><span class="eyebrow">Principales funcionalidades</span><h2>Atención organizada en cada etapa</h2><div class="landing-cards">
+    <article><div class="lp-icon">📝</div><h3>Registro de incidencias</h3><p>Selección de categoría, descripción y ubicación del hecho.</p></article>
+    <article><div class="lp-icon">📍</div><h3>Ubicación del incidente</h3><p>Búsqueda de dirección y referencia geográfica para orientar la atención.</p></article>
+    <article><div class="lp-icon">🔔</div><h3>Seguimiento</h3><p>Consulta informativa de las fases: recibido, asignado, en camino y atendido.</p></article>
+    <article><div class="lp-icon">📊</div><h3>Panel de gestión</h3><p>Indicadores y gráficos demostrativos para analizar las incidencias registradas.</p></article>
+  </div></section>
+  <section id="lp-ayuda" class="landing-help"><div><span class="eyebrow">Orientación y ayuda</span><h2>¿Necesitas registrar una incidencia?</h2><p>Ingresa al sistema, selecciona tu perfil de ciudadano y completa los datos solicitados. Puedes registrar una solicitud de demostración sin crear una cuenta.</p></div><button class="btn primary" onclick="enterSystem()">Acceder al sistema →</button></section>
+  <footer class="landing-footer">Sistema Inclusivo de Atención de Serenazgo · Municipalidad de Chorrillos · Prototipo académico</footer>
+</div>
+
+<div id="access" class="access-screen hidden">
+ <div class="access-card">
+  <div class="access-logo">✚</div><button class="btn" style="float:right" onclick="backLanding()">← Página principal</button><h1>Sistema Inclusivo de Atención de Serenazgo</h1><p class="muted">Municipalidad de Chorrillos · Selecciona tu tipo de acceso</p>
+  <div class="role-grid">
+   <button class="role-card" onclick="chooseRole('Ciudadano')"><span>👤</span><b>Ciudadano</b><small>Registrar y consultar incidencias</small></button>
+   <button class="role-card" onclick="chooseRole('Personal')"><span>🖥️</span><b>Personal</b><small>Revisar casos y asignar agentes</small></button>
+   <button class="role-card" onclick="chooseRole('Serenazgo')"><span>🛡️</span><b>Serenazgo</b><small>Atender incidencias asignadas</small></button>
+  </div>
+  <div id="loginArea" class="login-area hidden"><h2 id="loginTitle">Acceso</h2><label id="credentialLabel" for="credential">DNI</label><input id="credential" class="field" placeholder="Ingresa tu DNI"><label for="password" style="margin-top:13px">Contraseña</label><input id="password" class="field" type="password" placeholder="Ingresa tu contraseña"><p class="muted" id="loginHint">Demostración académica: puedes ingresar datos ficticios.</p><button class="btn primary full" onclick="loginRole()">Ingresar</button><button id="createAccountBtn" class="btn full" onclick="createCitizenAccount()" style="margin-top:8px">Crear cuenta de ciudadano</button><button id="forgotPasswordBtn" class="btn full" onclick="recoverCitizenPassword()" style="margin-top:8px">¿Olvidaste tu contraseña?</button><button class="btn full" onclick="backRoles()" style="margin-top:8px">Cambiar tipo de usuario</button></div>
+  <p class="footer">Prototipo académico · No utiliza credenciales reales</p>
+ </div>
+</div>
+<div id="rolePortal" class="hidden">
+<header class="top">
+ <div class="session-tools"><span id="roleBadge">Ciudadano</span><button id="changePasswordBtn" class="btn hidden" onclick="changeCitizenPassword()">Cambiar contraseña</button><button class="btn" onclick="logoutRole()">Cerrar sesión</button></div>
+ <div class="brand"><div class="crest">✚</div><div><h1>Sistema Inclusivo de Atención de Serenazgo</h1><p>Municipalidad de Chorrillos</p></div></div>
+ <div class="toplinks"><span>♿ Accesibilidad</span><span>🔊 Escuchar página</span><span>◉ Mi cuenta</span></div>
+</header>
+<div class="layout">
+<aside>
+ <button id="navHome" onclick="go(1)">⌂ &nbsp; Inicio</button>
+ <button id="navRequest" class="active" onclick="go(1)">＋ &nbsp; Solicitar atención</button>
+ <button id="navTrack" onclick="go(3)">⌕ &nbsp; Mis solicitudes</button>
+ <button onclick="toast('Prototipo académico de demostración.')">? &nbsp; Ayuda</button>
+</aside>
+<main>
+<section id="personalPanel" class="hidden">
+ <h2>Panel de gestión de incidencias</h2><p class="lead">Revisa los reportes ciudadanos, informa sobre su estado y asigna agentes de Serenazgo.</p>
+ <section class="dashboard-block" aria-label="Dashboard interactivo">
+  <div class="dashboard-heading"><div><span class="eyebrow">Indicadores de gestión</span><h2>Dashboard de incidencias</h2><p class="muted">Datos ficticios de demostración, combinados con los casos registrados durante esta sesión.</p></div><span class="demo-tag">Datos simulados</span></div>
+  <div class="filter-row"><label>Sector territorial<select id="filterSector" class="field" onchange="updateDashboard()"><option value="Todos">Todos los sectores</option><option>Sector 1</option><option>Sector 2</option><option>Sector 3</option><option>Sector 4</option></select></label><label class="date-filter">Desde<input id="filterStartDate" class="field" type="date" onchange="updateDashboard()"></label><label class="date-filter">Hasta<input id="filterEndDate" class="field" type="date" onchange="updateDashboard()"></label><button class="btn" onclick="resetDashboardFilters()">Restablecer filtros</button></div>
+  <div class="kpi-grid">
+    <div class="panel"><span class="muted">Incidencias registradas</span><h2 id="kTotal">0</h2><small class="muted">Unidad: casos</small></div>
+    <div class="panel"><span class="muted">Incidencias atendidas</span><h2 id="kDone">0</h2><small class="muted">Unidad: casos</small></div>
+    <div class="panel"><span class="muted">Incidencias pendientes</span><h2 id="kPending">0</h2><small class="muted">Unidad: casos</small></div>
+    <div class="panel"><span class="muted">Tiempo promedio de respuesta</span><h2 id="kTime">18 min</h2><small class="muted">Unidad: minutos · dato simulado</small></div>
+  </div>
+  <div class="charts-grid">
+    <div class="panel chart-panel"><h3 class="smallhead">Incidencias por categoría</h3><p class="muted">Cantidad de casos por tipo · periodo seleccionado</p><canvas id="chartCategory" height="210"></canvas></div>
+    <div class="panel chart-panel"><h3 class="smallhead">Incidencias por sector territorial</h3><p class="muted">Cantidad de casos por sector · periodo seleccionado</p><canvas id="chartSector" height="210"></canvas></div>
+    <div class="panel chart-panel chart-wide"><h3 class="smallhead">Evolución mensual de atenciones</h3><p class="muted">Casos atendidos por mes · últimos seis meses</p><canvas id="chartTrend" height="190"></canvas></div>
+  </div>
+  <p class="muted dashboard-note">Nota: los valores son ficticios y se utilizan únicamente para la práctica académica. Los filtros actualizan los KPI y los tres gráficos.</p>
+</section>
+ <div class="panel"><h3 class="smallhead">Casos recibidos</h3><div class="table-wrap"><table><thead><tr><th>Código</th><th>Incidencia</th><th>Ubicación</th><th>Estado de atención</th><th>Asignar agente</th><th>Acciones</th></tr></thead><tbody id="caseRows"><tr><td colspan="6">Aún no hay incidencias registradas.</td></tr></tbody></table></div></div>
+ <div class="panel"><h3 class="smallhead">Resumen por categoría</h3><div id="categorySummary" class="summary-bars">Sin datos todavía.</div></div>
+ </section>
+<section id="serenazgoPanel" class="hidden"><h2>Mis incidencias asignadas</h2><p class="lead">Consulta los casos que te asignó el Personal, revisa su ubicación y registra el resultado de la atención.</p><div id="agentCases" class="case-list"><div class="panel">No tienes incidencias asignadas por el momento.</div></div></section>
+<div id="citizenPanel">
+<div class="steps">
+ <div class="step" id="step1"><span class="bubble">1</span><span>Tipo de incidente</span></div><div class="line"></div>
+ <div class="step" id="step2"><span class="bubble">2</span><span>Ubicación y detalles</span></div><div class="line"></div>
+ <div class="step" id="step3"><span class="bubble">3</span><span>Confirmación y seguimiento</span></div>
+</div>
+
+<section id="screen1">
+ <h2>¿Necesitas ayuda de Serenazgo?</h2><p class="lead">Selecciona el tipo de incidente para iniciar tu solicitud. Esta plataforma busca ser inclusiva y accesible para todos los ciudadanos.</p>
+ <div class="grid">
+  <button class="incident" data-kind="Violencia" onclick="selectIncident(this)"><div class="icon">🛡️</div><strong>Violencia</strong><span>Agresión, riñas, violencia familiar u otra situación de riesgo.</span></button>
+  <button class="incident" data-kind="Robo" onclick="selectIncident(this)"><div class="icon">🔎</div><strong>Robo</strong><span>Robo, asalto, intento de robo o actividad sospechosa.</span></button>
+  <button class="incident" data-kind="Accidente" onclick="selectIncident(this)"><div class="icon">🚘</div><strong>Accidente</strong><span>Accidente de tránsito, vehículo averiado u otra emergencia vial.</span></button>
+  <button class="incident" data-kind="Auxilio" onclick="selectIncident(this)"><div class="icon">✚</div><strong>Auxilio</strong><span>Necesito ayuda por otra situación urgente.</span></button>
+ </div>
+ <div class="notice">🔊 ¿No estás seguro? Selecciona una opción para leer su descripción. En una emergencia con peligro inmediato, contacta también a los servicios de emergencia correspondientes.</div>
+ <div class="actions"><span class="muted">Paso 1 de 3 · No necesitas crear una cuenta para comenzar.</span><button class="btn primary" id="toLocation" disabled onclick="go(2)">Continuar con la solicitud →</button></div>
+</section>
+
+<section id="screen2" class="hidden">
+ <h2>¿Dónde ocurre el incidente?</h2><p class="lead">Busca una dirección o usa el GPS del dispositivo. También puedes hacer clic en el mapa para marcar el punto exacto.</p>
+ <div class="two">
+  <div class="panel">
+   <h3 class="smallhead">📍 Ubicación del incidente</h3>
+   <label for="address">Buscar dirección</label>
+   <div class="row"><input id="address" class="field" placeholder="Ej. Av. Defensores del Morro, Chorrillos"><button class="btn" onclick="searchAddress()">Buscar</button></div>
+   <div class="maptools"><button class="btn" onclick="useGPS()">◎ Usar mi ubicación actual</button><button class="btn" onclick="resetMap()">Volver a Chorrillos</button></div>
+   <div id="map" aria-label="Google Maps centrado en UPN Chorrillos"><iframe id="googleMapFrame" title="Google Maps - UPN Chorrillos" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Universidad%20Privada%20del%20Norte%2C%20Av.%20Guardia%20Peruana%20890%2C%20Chorrillos%2C%20Lima&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe></div>
+   <p class="muted">El mapa muestra Google Maps centrado inicialmente en la UPN Chorrillos. Busca una dirección o utiliza el GPS para registrar el punto exacto. El mapa necesita conexión a internet.</p>
+   <label for="reference">Referencia del lugar (opcional)</label><input id="reference" class="field" placeholder="Ej. Frente al parque, junto a la tienda">
+   <p id="chosenAddress" class="notice">Ubicación pendiente: selecciona un punto en el mapa o busca una dirección.</p>
+  </div>
+  <div class="panel">
+   <h3 class="smallhead">Evidencia adicional (opcional)</h3><p class="muted">Puedes adjuntar una fotografía o audio para explicar mejor la situación. No es obligatorio.</p>
+   <label for="photo">Adjuntar fotografía</label><input id="photo" class="field" type="file" accept="image/*">
+   <label for="audio" style="margin-top:18px">Adjuntar audio</label><input id="audio" class="field" type="file" accept="audio/*">
+   <label for="description" style="margin-top:18px">Descripción breve (opcional)</label><textarea id="description" class="field" rows="4" maxlength="300" placeholder="Describe lo que ocurre sin ponerte en riesgo."></textarea>
+   <div class="notice"><strong>Resumen</strong><br>Incidente: <span id="sumKind">Sin seleccionar</span><br>Ubicación: <span id="sumLocation">Pendiente de seleccionar</span></div>
+  </div>
+ </div>
+ <div class="actions"><button class="btn" onclick="go(1)">← Volver</button><button class="btn primary" onclick="submitRequest()">Enviar solicitud →</button></div>
+</section>
+
+<section id="screen3" class="hidden">
+ <div class="statusbanner"><div class="check">✓</div><div><h2 style="font-size:25px">¡Tu solicitud ha sido registrada!</h2><p class="lead" style="margin:6px 0 0">El Personal de la central revisará tu reporte, coordinará la atención y te comunicará las novedades.</p></div><div class="ticket"><span class="muted">Número de solicitud</span><strong id="ticketId">SER-000123</strong><span class="muted" id="ticketDate"></span></div></div>
+ <div class="panel"><h3 class="smallhead">Resumen de tu solicitud</h3><div class="kv"><span>Tipo de incidente</span><strong id="trackKind">—</strong></div><div class="kv"><span>Referencia</span><strong id="trackReference">—</strong></div><div class="kv"><span>Descripción</span><strong id="trackDescription">—</strong></div><div class="kv"><span>Ubicación</span><strong id="trackAddress">—</strong></div></div><div class="panel" id="citizenStatusPanel"><h3 class="smallhead">Estado de tu solicitud</h3><div class="notice" style="margin:0 0 12px">Este estado es informativo. El Personal y Serenazgo son los únicos que pueden actualizar la fase de atención.</div><div class="kv"><span>Estado actual</span><strong id="citizenCurrentStatus">Recibido</strong></div><div class="progress" id="citizenProgress"><div class="state active"><div class="bubble">1</div><b>Recibido</b></div><div class="state"><div class="bubble">2</div><b>Asignado</b></div><div class="state"><div class="bubble">3</div><b>En camino</b></div><div class="state"><div class="bubble">4</div><b>Atendido</b></div></div></div>
+ <div class="actions"><button class="btn primary" onclick="newRequest()">Registrar otra incidencia</button></div>
+</section>
+</div>
+<div class="footer">Prototipo académico · Sistema Inclusivo de Atención de Serenazgo — Municipalidad de Chorrillos</div>
+</main>
+</div>
+</div>
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+let selectedKind='', coords=null, addressText='', requestNumber=123, status=0;
+// Coordenadas referenciales del entorno del campus UPN Chorrillos (Av. Guardia Peruana 890).
+const defaultCenter=[-12.1776,-77.0128];
+const upnAddress='Universidad Privada del Norte, Av. Guardia Peruana 890, Chorrillos, Lima';
+function showGoogleMap(query){const frame=document.getElementById('googleMapFrame');if(frame)frame.src='https://maps.google.com/maps?q='+encodeURIComponent(query)+'&t=&z=16&ie=UTF8&iwloc=&output=embed';}
+const statusNames=['Recibido','Asignado','En camino','Atendido'];
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.remove('hidden');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.add('hidden'),3200)}
+function selectIncident(el){document.querySelectorAll('.incident').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedKind=el.dataset.kind;document.getElementById('toLocation').disabled=false;document.getElementById('sumKind').textContent=selectedKind}
+function go(n){[1,2,3].forEach(i=>document.getElementById('screen'+i).classList.toggle('hidden',i!==n));[1,2,3].forEach(i=>{let e=document.getElementById('step'+i);e.classList.toggle('current',i===n);e.classList.toggle('done',i<n)});document.getElementById('navRequest').classList.toggle('active',n<3);document.getElementById('navTrack').classList.toggle('active',n===3);if(n===2)initMap();window.scrollTo({top:0,behavior:'smooth'})}
+function initMap(){const frame=document.getElementById('googleMapFrame');if(frame&&!frame.src)showGoogleMap(upnAddress)}
+function setLocation(lat,lon,label){coords={lat,lon};addressText=label||'Ubicación seleccionada';showGoogleMap(lat+','+lon);document.getElementById('chosenAddress').textContent='Ubicación seleccionada: '+addressText+' · '+lat.toFixed(5)+', '+lon.toFixed(5);document.getElementById('sumLocation').textContent=addressText}
+async function searchAddress(){const q=document.getElementById('address').value.trim();if(!q){toast('Escribe una dirección para buscar.');return}try{const url='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+encodeURIComponent(q+', Chorrillos, Lima, Perú');const res=await fetch(url,{headers:{'Accept-Language':'es'}});if(!res.ok)throw new Error();const data=await res.json();if(!data.length){toast('No encontramos esa dirección. Prueba con otra dirección o selecciona el mapa.');return}const p=data[0];setLocation(Number(p.lat),Number(p.lon),p.display_name);toast('Dirección encontrada. Revisa el marcador.')}catch(e){toast('No se pudo buscar la dirección. Comprueba tu conexión o selecciona un punto en el mapa.')}}
+function useGPS(){if(!navigator.geolocation){toast('Tu navegador no permite obtener la ubicación. Busca la dirección o marca el mapa.');return}toast('Solicitando permiso de ubicación…');navigator.geolocation.getCurrentPosition(p=>{setLocation(p.coords.latitude,p.coords.longitude,'Ubicación GPS actual');document.getElementById('address').value='Ubicación GPS actual';toast('Ubicación obtenida. Confirma que el marcador sea correcto.')},e=>toast('No se pudo obtener el GPS. Permite el acceso a ubicación o selecciona el mapa.'),{enableHighAccuracy:true,timeout:12000,maximumAge:0})}
+function resetMap(){document.getElementById('address').value='UPN Chorrillos, Av. Guardia Peruana 890';setLocation(defaultCenter[0],defaultCenter[1],'UPN Chorrillos (ubicación referencial)');showGoogleMap(upnAddress)}
+function submitRequest(){if(!selectedKind){toast('Regresa y selecciona un tipo de incidente.');go(1);return}if(!coords){toast('Selecciona la ubicación en el mapa, busca una dirección o usa el GPS.');return}requestNumber++;status=0;document.getElementById('ticketId').textContent='SER-'+String(requestNumber).padStart(6,'0');document.getElementById('ticketDate').textContent='Fecha y hora: '+new Date().toLocaleString('es-PE');document.getElementById('trackKind').textContent=selectedKind;document.getElementById('trackReference').textContent=document.getElementById('reference').value||'No indicada';document.getElementById('trackDescription').textContent=document.getElementById('description').value||'Sin descripción adicional';document.getElementById('trackAddress').textContent=addressText+' ('+coords.lat.toFixed(5)+', '+coords.lon.toFixed(5)+')';status=0;go(3)}
+function renderStatus(){const states=[...document.querySelectorAll('#progress .state')];states.forEach((el,i)=>{el.classList.toggle('complete',i<status);el.classList.toggle('active',i===status);el.querySelector('.bubble').textContent=i<status?'✓':String(i+1)});document.getElementById('trackStatus').textContent=statusNames[status]}
+function updateStatus(){status=Number(document.getElementById('statusSelect').value);renderStatus();toast('Estado actualizado a: '+statusNames[status]+'. (Simulación del prototipo)')}
+function initMiniMap(){if(!coords)return;const mini=document.getElementById('miniMap');if(mini)mini.innerHTML='<iframe title="Google Maps ubicación del incidente" style="width:100%;height:100%;border:0" loading="lazy" src="https://maps.google.com/maps?q='+coords.lat+','+coords.lon+'&z=15&output=embed"></iframe>'}
+function newRequest(){selectedKind='';coords=null;addressText='';document.querySelectorAll('.incident').forEach(b=>b.classList.remove('selected'));document.getElementById('toLocation').disabled=true;['address','reference','description'].forEach(id=>document.getElementById(id).value='');document.getElementById('photo').value='';document.getElementById('audio').value='';document.getElementById('chosenAddress').textContent='Ubicación pendiente: selecciona un punto en el mapa o busca una dirección.';document.getElementById('sumKind').textContent='Sin seleccionar';document.getElementById('sumLocation').textContent='Pendiente de seleccionar';go(1)}
+
+let activeRole='', cases=[];let caseCounter=100;let loggedCitizenDni='';
+const DEMO_STAFF={Personal:{user:'PERSONAL01',password:'Personal123'},Serenazgo:{user:'SER001',password:'Serenazgo123'}};
+function citizenAccounts(){try{return JSON.parse(localStorage.getItem('serenazgoCitizenAccounts')||'{}')}catch(e){return {}}}
+function saveCitizenAccounts(data){localStorage.setItem('serenazgoCitizenAccounts',JSON.stringify(data))}
+function chooseRole(role){activeRole=role;document.getElementById('loginArea').classList.remove('hidden');document.getElementById('loginTitle').textContent='Ingreso de '+role;const labels={Ciudadano:'DNI',Personal:'Código o usuario institucional',Serenazgo:'Código de trabajador'};const hints={Ciudadano:'Si aún no tienes cuenta, selecciona “Crear cuenta de ciudadano”.',Personal:'Usuario demostrativo: PERSONAL01 · Contraseña: Personal123',Serenazgo:'Usuario demostrativo: SER001 · Contraseña: Serenazgo123'};document.getElementById('credentialLabel').textContent=labels[role];document.getElementById('credential').placeholder=labels[role];document.getElementById('loginHint').textContent=hints[role];document.getElementById('password').value='';document.getElementById('credential').value='';document.getElementById('createAccountBtn').classList.toggle('hidden',role!=='Ciudadano');document.getElementById('forgotPasswordBtn').classList.toggle('hidden',role!=='Ciudadano');document.getElementById('loginArea').scrollIntoView({behavior:'smooth',block:'center'})}
+function backRoles(){document.getElementById('loginArea').classList.add('hidden');activeRole=''}
+function createCitizenAccount(){const name=prompt('Nombre completo del ciudadano:');if(!name)return;const dni=prompt('DNI (8 dígitos ficticios para esta demostración):');if(!/^\d{8}$/.test(dni||'')){toast('El DNI debe tener 8 dígitos.');return}const accounts=citizenAccounts();if(accounts[dni]){toast('Ya existe una cuenta con ese DNI.');return}const pass=prompt('Crea una contraseña (mínimo 6 caracteres):');if(!pass||pass.length<6){toast('La contraseña debe tener al menos 6 caracteres.');return}const confirm=prompt('Repite la contraseña:');if(pass!==confirm){toast('Las contraseñas no coinciden.');return}accounts[dni]={name:name.trim(),password:pass};saveCitizenAccounts(accounts);document.getElementById('credential').value=dni;document.getElementById('password').value=pass;toast('Cuenta creada. Ya puedes ingresar con tu DNI y contraseña.')}
+function recoverCitizenPassword(){const dni=prompt('Ingresa el DNI de tu cuenta:');const accounts=citizenAccounts();if(!accounts[dni]){toast('No encontramos una cuenta con ese DNI.');return}const pass=prompt('Nueva contraseña (mínimo 6 caracteres):');if(!pass||pass.length<6){toast('La contraseña debe tener al menos 6 caracteres.');return}const confirm=prompt('Repite la nueva contraseña:');if(pass!==confirm){toast('Las contraseñas no coinciden.');return}accounts[dni].password=pass;saveCitizenAccounts(accounts);toast('Contraseña actualizada. Ya puedes ingresar.')}
+function changeCitizenPassword(){const accounts=citizenAccounts();const old=prompt('Ingresa tu contraseña actual:');if(old!==accounts[loggedCitizenDni]?.password){toast('La contraseña actual no es correcta.');return}const pass=prompt('Nueva contraseña (mínimo 6 caracteres):');if(!pass||pass.length<6){toast('La contraseña debe tener al menos 6 caracteres.');return}const confirm=prompt('Repite la nueva contraseña:');if(pass!==confirm){toast('Las contraseñas no coinciden.');return}accounts[loggedCitizenDni].password=pass;saveCitizenAccounts(accounts);toast('Tu contraseña fue cambiada.')}
+function loginRole(){const user=document.getElementById('credential').value.trim();const pass=document.getElementById('password').value;if(!user||!pass){toast('Completa tus credenciales para ingresar.');return}if(activeRole==='Ciudadano'){const account=citizenAccounts()[user];if(!account||account.password!==pass){toast('DNI o contraseña incorrectos. Crea una cuenta si aún no tienes.');return}loggedCitizenDni=user}else{const demo=DEMO_STAFF[activeRole];if(user!==demo.user||pass!==demo.password){toast('Usuario o contraseña incorrectos. Revisa las credenciales de demostración.');return}}document.getElementById('access').classList.add('hidden');document.getElementById('rolePortal').classList.remove('hidden');document.getElementById('roleBadge').textContent=activeRole;document.getElementById('changePasswordBtn').classList.toggle('hidden',activeRole!=='Ciudadano');document.getElementById('citizenPanel').classList.toggle('hidden',activeRole!=='Ciudadano');document.getElementById('personalPanel').classList.toggle('hidden',activeRole!=='Personal');document.getElementById('serenazgoPanel').classList.toggle('hidden',activeRole!=='Serenazgo');document.querySelector('aside').classList.toggle('hidden',activeRole!=='Ciudadano');document.querySelector('.layout').classList.toggle('role-wide',activeRole!=='Ciudadano');if(activeRole==='Personal')renderPersonal();if(activeRole==='Serenazgo')renderAgent();window.scrollTo(0,0)}
+function logoutRole(){document.getElementById('rolePortal').classList.add('hidden');document.getElementById('access').classList.remove('hidden');document.getElementById('loginArea').classList.add('hidden');document.getElementById('changePasswordBtn').classList.add('hidden');activeRole='';loggedCitizenDni='';}
+const oldSubmitRequest=submitRequest;
+submitRequest=function(){if(!selectedKind||!coords){oldSubmitRequest();return}oldSubmitRequest();const item={id:document.getElementById('ticketId').textContent,kind:selectedKind,location:addressText,description:document.getElementById('description').value||'Sin descripción',status:'Recibido',agent:'',reference:document.getElementById('reference').value||'No indicada',citizenDni:loggedCitizenDni,sector:'Sector 1',days:0,month:5};cases.push(item);renderCitizenStatus(item);};
+function renderPersonal(){if(!document.getElementById('filterStartDate').value||!document.getElementById('filterEndDate').value)resetDashboardFilters();document.getElementById('kTotal').textContent=cases.length;document.getElementById('kDone').textContent=cases.filter(c=>c.status==='Atendido').length;document.getElementById('kPending').textContent=cases.filter(c=>c.status!=='Atendido').length;const rows=document.getElementById('caseRows');rows.innerHTML=cases.length?'':'<tr><td colspan="6">Aún no hay incidencias registradas. Registra una desde el acceso Ciudadano.</td></tr>';cases.forEach((c,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${c.id}</td><td>${c.kind}</td><td>${escapeHtml(c.location)}</td><td><select class="field" id="personalStatus${i}"><option>Recibido</option><option>Asignado</option><option>En camino</option><option>Atendido</option></select></td><td><select class="field" id="agent${i}"><option value="">Sin asignar</option><option>Agente SER-01</option><option>Agente SER-02</option><option>Agente SER-03</option></select></td><td><div class="row"><button class="btn" onclick="updatePersonalStatus(${i})">Actualizar estado</button><button class="btn primary" onclick="assignCase(${i})">Asignar</button></div></td>`;rows.appendChild(tr);document.getElementById('agent'+i).value=c.agent;document.getElementById('personalStatus'+i).value=c.status});const counts={};cases.forEach(c=>counts[c.kind]=(counts[c.kind]||0)+1);document.getElementById('categorySummary').innerHTML=Object.keys(counts).length?Object.entries(counts).map(([k,v])=>`<div class="barrow"><span>${k}</span><div class="bar"><i style="width:${v/ cases.length*100}%"></i></div><b>${v}</b></div>`).join(''):'Sin datos todavía.';updateDashboard()}
+function renderCitizenStatus(item){
+ const current=item||cases.find(c=>c.id===document.getElementById('ticketId')?.textContent);
+ if(!current)return;
+ const names=['Recibido','Asignado','En camino','Atendido'];
+ const idx=Math.max(0,names.indexOf(current.status));
+ const label=document.getElementById('citizenCurrentStatus');
+ const progress=document.getElementById('citizenProgress');
+ if(label)label.textContent=current.status;
+ if(progress)progress.innerHTML=names.map((name,i)=>`<div class="state ${i<idx?'complete':i===idx?'active':''}"><div class="bubble">${i<idx?'✓':i+1}</div><b>${name}</b></div>`).join('');
+}
+function refreshCitizenStatusForCase(item){if(item&&item.id===document.getElementById('ticketId')?.textContent)renderCitizenStatus(item)}
+function updatePersonalStatus(i){cases[i].status=document.getElementById('personalStatus'+i).value;renderPersonal();refreshCitizenStatusForCase(cases[i]);toast('Estado actualizado a '+cases[i].status+'. El ciudadano podrá consultar el avance.')}
+function assignCase(i){const agent=document.getElementById('agent'+i).value;if(!agent){toast('Selecciona un agente antes de asignar.');return}cases[i].agent=agent;cases[i].status='Asignado';renderPersonal();toast('Incidencia asignada a '+agent+'.')}
+function renderAgent(){const root=document.getElementById('agentCases');const assigned=cases.map((c,i)=>({...c,index:i})).filter(c=>c.agent);root.innerHTML=assigned.length?'':'<div class="panel">No tienes incidencias asignadas. El Personal debe asignarte un caso.</div>';assigned.forEach(c=>{const el=document.createElement('div');el.className='case-item';el.innerHTML=`<h3>${c.id} · ${c.kind}</h3><p class="muted">Ubicación: ${escapeHtml(c.location)}<br>Referencia: ${escapeHtml(c.reference)}<br>Descripción: ${escapeHtml(c.description)}<br>Estado actual: <b>${c.status}</b></p><label for="agentStatus${c.index}">Actualizar atención</label><select class="field" id="agentStatus${c.index}"><option>Asignado</option><option>En camino</option><option>Atendido</option></select><button class="btn primary" style="margin-top:10px" onclick="updateAgentCase(${c.index})">Guardar actualización</button>`;root.appendChild(el);document.getElementById('agentStatus'+c.index).value=c.status});}
+function updateAgentCase(i){cases[i].status=document.getElementById('agentStatus'+i).value;renderAgent();refreshCitizenStatusForCase(cases[i]);toast('Estado actualizado. El Personal y el ciudadano podrán consultar el avance.')}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+
+function enterSystem(){document.getElementById('landingPage').classList.add('hidden');document.getElementById('access').classList.remove('hidden');window.scrollTo(0,0)}
+function backLanding(){document.getElementById('access').classList.add('hidden');document.getElementById('landingPage').classList.remove('hidden');window.scrollTo(0,0)}
+
+/* Dataset ficticio para la PC12. Los datos reales de esta sesión se agregan al filtrar. */
+const demoIncidents=[
+ {kind:'Robo',sector:'Sector 1',status:'Atendido',days:4,month:0},
+ {kind:'Violencia',sector:'Sector 2',status:'Atendido',days:8,month:0},
+ {kind:'Accidente',sector:'Sector 3',status:'En camino',days:12,month:0},
+ {kind:'Auxilio',sector:'Sector 1',status:'Atendido',days:16,month:0},
+ {kind:'Robo',sector:'Sector 4',status:'Asignado',days:22,month:1},
+ {kind:'Accidente',sector:'Sector 2',status:'Atendido',days:35,month:1},
+ {kind:'Violencia',sector:'Sector 3',status:'Atendido',days:43,month:1},
+ {kind:'Auxilio',sector:'Sector 4',status:'Recibido',days:51,month:2},
+ {kind:'Robo',sector:'Sector 1',status:'Atendido',days:65,month:2},
+ {kind:'Accidente',sector:'Sector 3',status:'Atendido',days:74,month:2},
+ {kind:'Auxilio',sector:'Sector 2',status:'Atendido',days:92,month:3},
+ {kind:'Violencia',sector:'Sector 4',status:'En camino',days:108,month:3},
+ {kind:'Robo',sector:'Sector 2',status:'Atendido',days:130,month:4},
+ {kind:'Accidente',sector:'Sector 1',status:'Atendido',days:148,month:4},
+ {kind:'Auxilio',sector:'Sector 3',status:'Atendido',days:165,month:5},
+ {kind:'Violencia',sector:'Sector 1',status:'Asignado',days:178,month:5},
+ {kind:'Robo',sector:'Sector 3',status:'Atendido',days:12,month:0},
+ {kind:'Auxilio',sector:'Sector 2',status:'Atendido',days:28,month:0},
+ {kind:'Accidente',sector:'Sector 4',status:'Recibido',days:48,month:1},
+ {kind:'Violencia',sector:'Sector 2',status:'Atendido',days:82,month:2}
+];
+const trendLabels=['Jun','Jul','Ago','Sep','Oct','Nov'];
+function dashboardRecords(){
+ const startValue=document.getElementById('filterStartDate')?.value;
+ const endValue=document.getElementById('filterEndDate')?.value;
+ const today=new Date();today.setHours(0,0,0,0);
+ const start=startValue?new Date(startValue+'T00:00:00'):new Date(today.getTime()-30*86400000);
+ const end=endValue?new Date(endValue+'T23:59:59'):new Date(today.getTime()+86399999);
+ const sector=document.getElementById('filterSector')?.value||'Todos';
+ const inRange=daysAgo=>{const date=new Date(today.getTime()-daysAgo*86400000);return date>=start&&date<=end};
+ const demo=demoIncidents.filter(x=>inRange(x.days)&&(sector==='Todos'||x.sector===sector));
+ const live=cases.map(c=>({kind:c.kind,sector:c.sector||'Sector 1',status:c.status,days:0,month:5}));
+ return [...demo,...live.filter(x=>sector==='Todos'||x.sector===sector)];
+}
+function drawBars(canvasId,labels,values){
+ const c=document.getElementById(canvasId);if(!c)return;const dpr=window.devicePixelRatio||1,w=c.clientWidth||500,h=230;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+ const max=Math.max(1,...values),left=34,bottom=35,top=16,usableH=h-top-bottom,slot=(w-left-14)/Math.max(1,labels.length),bw=Math.min(42,slot*.58);
+ ctx.font='12px Arial';ctx.textAlign='center';labels.forEach((lab,i)=>{const bh=values[i]/max*usableH,x=left+i*slot+(slot-bw)/2,y=top+usableH-bh;ctx.fillStyle='#1764c0';ctx.fillRect(x,y,bw,bh);ctx.fillStyle='#263548';ctx.fillText(values[i],x+bw/2,Math.max(12,y-6));ctx.fillStyle='#596579';ctx.fillText(lab,x+bw/2,h-12)});ctx.strokeStyle='#d7dee8';ctx.beginPath();ctx.moveTo(left,top+usableH);ctx.lineTo(w-8,top+usableH);ctx.stroke();
+}
+function drawTrend(canvasId,values){
+ const c=document.getElementById(canvasId);if(!c)return;const dpr=window.devicePixelRatio||1,w=c.clientWidth||700,h=210;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const max=Math.max(1,...values),pad=34,usableW=w-pad*2,usableH=130,base=155;
+ ctx.strokeStyle='#d7dee8';ctx.beginPath();ctx.moveTo(pad,base);ctx.lineTo(w-pad,base);ctx.stroke();ctx.strokeStyle='#1764c0';ctx.lineWidth=3;ctx.beginPath();values.forEach((v,i)=>{const x=pad+(usableW/(values.length-1))*i,y=base-(v/max)*usableH;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();
+ values.forEach((v,i)=>{const x=pad+(usableW/(values.length-1))*i,y=base-(v/max)*usableH;ctx.fillStyle='#1764c0';ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#263548';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(v,x,y-10);ctx.fillStyle='#596579';ctx.fillText(trendLabels[i],x,185)});
+}
+function updateDashboard(){
+ const data=dashboardRecords(),total=data.length,done=data.filter(x=>x.status==='Atendido').length,pending=total-done;
+ document.getElementById('kTotal').textContent=total;document.getElementById('kDone').textContent=done;document.getElementById('kPending').textContent=pending;
+ const response=data.length?Math.round(data.reduce((a,x)=>a+(x.status==='Atendido'?14:24),0)/data.length):0;document.getElementById('kTime').textContent=response+' min';
+ const cats=['Robo','Violencia','Accidente','Auxilio'];drawBars('chartCategory',cats,cats.map(k=>data.filter(x=>x.kind===k).length));
+ const sectors=['Sector 1','Sector 2','Sector 3','Sector 4'];drawBars('chartSector',sectors,sectors.map(k=>data.filter(x=>x.sector===k).length));
+ const monthly=trendLabels.map((_,i)=>data.filter(x=>x.month===i&&x.status==='Atendido').length);drawTrend('chartTrend',monthly);
+}
+function resetDashboardFilters(){
+ document.getElementById('filterSector').value='Todos';
+ const today=new Date();today.setHours(0,0,0,0);
+ const start=new Date(today.getTime()-30*86400000);
+ const toISO=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`};
+ document.getElementById('filterStartDate').value=toISO(start);
+ document.getElementById('filterEndDate').value=toISO(today);
+ updateDashboard();
+}
+window.addEventListener('resize',()=>{if(!document.getElementById('personalPanel')?.classList.contains('hidden'))updateDashboard()});
+
+</script>
+</body>
+</html>
